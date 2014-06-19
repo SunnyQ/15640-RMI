@@ -10,7 +10,6 @@ public class RMIMessage implements Serializable {
 	private static final long serialVersionUID = 3716508031587963606L;
 	
 	// instance variables
-	private Object object;	      // target object to invoke method on
 	private String methodName;    // method to invoke 
 	private Object[] args;        // arguments to the method
 	private Exception exception;  // store any exception generated
@@ -18,8 +17,7 @@ public class RMIMessage implements Serializable {
 	private Class<?> returnType;     // store the return type of the method
 	
 	// constructor
-	public RMIMessage(Object object, String methodName, Object[] args) {
-		this.object = object;
+	public RMIMessage(String methodName, Object[] args) {
 		this.methodName = methodName;
 		this.args = args;
 		exception = null;
@@ -28,7 +26,7 @@ public class RMIMessage implements Serializable {
 	}
 	
 	// invoke the specified method on the specified object with specified arguments
-	public void invoke() {
+	public void invoke(Object object) {
 		// check validity
 		if (object == null || methodName == null) {
 			throw new RuntimeException("Bad invocation...");
@@ -45,8 +43,7 @@ public class RMIMessage implements Serializable {
 		try {
 			Method method = objectClass.getMethod(methodName, argsClass);
 			returnType = method.getReturnType();   		
-			returnValue = method.invoke(object, args);
-			
+			returnValue = method.invoke(object, args);			
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			this.exception = e;
@@ -64,11 +61,6 @@ public class RMIMessage implements Serializable {
 			this.exception = e;
 		}
 		
-	}
-	
-	// getter and setters
-	public Object getObject() {
-		return this.object;
 	}
 	
 	public String getMethodName() {
