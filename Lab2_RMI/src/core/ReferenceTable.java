@@ -10,7 +10,6 @@ import java.util.HashMap;
  */
 public class ReferenceTable {
 	
-	
 	private static int objectCounter = 0; // Generates a new objectKey for each remote object
 	private HashMap<RemoteObjectReference, Object> referenceTable;
     
