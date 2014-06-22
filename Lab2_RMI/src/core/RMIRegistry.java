@@ -50,14 +50,12 @@ public class RMIRegistry {
 				String roRefIP = in.readLine();		
 				System.out.println(roRefIP);		
 				int roRefPort = Integer.parseInt(in.readLine());
-				System.out.println(roRefPort);		
-				int roRefObjKey = Integer.parseInt(in.readLine());
-				System.out.println(roRefObjKey);	
+				System.out.println(roRefPort);
 				String roRefInterfaceName = in.readLine();	
 				System.out.println(roRefInterfaceName);
 					
 				// create RemoteObjectReference
-				roRef = new RemoteObjectReference(roRefIP, roRefPort, roRefObjKey, roRefInterfaceName);
+				roRef = new RemoteObjectReference(roRefIP, roRefPort, roRefInterfaceName);
 				
 			} else {
 				System.out.println("service not found...");
@@ -99,7 +97,6 @@ public class RMIRegistry {
 			out.println(serviceName);
 			out.println(roRef.getIP());
 			out.println(roRef.getPort()); 
-			out.println(roRef.getObjectKey());
 			out.println(roRef.getInterfaceName());
 		
 			// wait for acknowledgement

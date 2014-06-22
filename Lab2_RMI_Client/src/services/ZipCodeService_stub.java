@@ -1,4 +1,4 @@
-package core;
+package services;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -46,6 +46,8 @@ public class ZipCodeService_stub {
 		
 		// create a RMIMessage
 		RMIMessage message = new RMIMessage("initialize", new Object[]{newlist});
+		message.attachReference(roRef);
+		
 		// establish connection 
 		establishConnection();
 		// deliver RMIMessage
@@ -62,6 +64,8 @@ public class ZipCodeService_stub {
 		
 		// create a RMIMessage
 		RMIMessage message = new RMIMessage("find", new Object[]{city});
+		message.attachReference(roRef);
+		
 		// establish connection 
 		establishConnection();
 		// deliver RMIMessage
@@ -78,6 +82,8 @@ public class ZipCodeService_stub {
 		
 		// create a RMIMessage
 		RMIMessage message = new RMIMessage("findAll", null);
+		message.attachReference(roRef);
+		
 		// establish connection 
 		establishConnection();
 		// deliver RMIMessage
@@ -94,6 +100,8 @@ public class ZipCodeService_stub {
 		
 		// create a RMIMessage
 		RMIMessage message = new RMIMessage("printAll", null);
+		message.attachReference(roRef);
+		
 		// establish connection 
 		establishConnection();
 		// deliver RMIMessage
@@ -104,6 +112,11 @@ public class ZipCodeService_stub {
 	public void deliver(RMIMessage message) {
 		try {
 			outputStream.writeObject(message);
+			// if no object key generated, then wait for the assigned object key
+			if (roRef.getObjectKey() == -1) {
+				Integer assignedKey = (Integer) inputStream.readObject();
+				roRef.setObjectKey(assignedKey);
+			}
 			replyMessage = (RMIMessage) inputStream.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -19,7 +19,7 @@ public class RMIRegistry {
     }
 
     // look up a RemoteObjectReference by name
-    public RemoteObjectReference lookup(String interfaceName)
+    public RemoteObjectReference lookup(String serviceName)
     {
 		Socket socket = null;
 		RemoteObjectReference roRef = null;
@@ -36,7 +36,7 @@ public class RMIRegistry {
 			
 			// send request and interface name (service name)
 			out.println("lookup");
-			out.println(interfaceName);
+			out.println(serviceName);
 			
 			System.out.println("command and service name sent.");
 			
@@ -50,14 +50,12 @@ public class RMIRegistry {
 				String roRefIP = in.readLine();		
 				System.out.println(roRefIP);		
 				int roRefPort = Integer.parseInt(in.readLine());
-				System.out.println(roRefPort);		
-				int roRefObjKey = Integer.parseInt(in.readLine());
-				System.out.println(roRefObjKey);	
+				System.out.println(roRefPort);
 				String roRefInterfaceName = in.readLine();	
 				System.out.println(roRefInterfaceName);
 					
 				// create RemoteObjectReference
-				roRef = new RemoteObjectReference(roRefIP, roRefPort, roRefObjKey, roRefInterfaceName);
+				roRef = new RemoteObjectReference(roRefIP, roRefPort, roRefInterfaceName);
 				
 			} else {
 				System.out.println("service not found...");
@@ -83,8 +81,7 @@ public class RMIRegistry {
 		return roRef;
     }
 
-    // rebind a ROR. ROR can be null. again no check, on this or whatever. 
-    // I hate this but have no time.
+    // rebind a RemoteObjectReference
     public void rebind(String serviceName, RemoteObjectReference roRef) {
     	
     	// open socket
@@ -100,7 +97,6 @@ public class RMIRegistry {
 			out.println(serviceName);
 			out.println(roRef.getIP());
 			out.println(roRef.getPort()); 
-			out.println(roRef.getObjectKey());
 			out.println(roRef.getInterfaceName());
 		
 			// wait for acknowledgement

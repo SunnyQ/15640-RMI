@@ -1,4 +1,4 @@
-package core;
+package services;
 
 //a client for ZipCodeServer.
 //it uses ZipCodeServer as an interface, and test
@@ -12,22 +12,35 @@ package core;
 //...
 //end.
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+
+import core.LocateRMIRegistry;
+import core.RMIConstants;
+import core.RMIRegistry;
+import core.RemoteObjectReference;
 
 public class ZipCodeClient { 
-
-	// the main takes four arguments:
-	// (0) a host. 
-	// (1) a port.
-	// (2) a service name.
-	// (3) a file name as above. 
+ 
 	public static void main(String[] args) {
-		String host = args[0];
-		int port = Integer.parseInt(args[1]);
-		String serviceName = args[2];
-
+		
+//		String host = args[0];
+//		int port = Integer.parseInt(args[1]);
+//		String serviceName = args[2];
+//		String fileName = args[3];
+	
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(args[3]));
+			// manually supply arguments
+			String host = InetAddress.getLocalHost().getHostName();
+			int port = RMIConstants.REGISTRY_PORT;
+			String serviceName = RMIConstants.SERVICE_NAME;
+			String fileName = "zipcodes.txt";
+			
+			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			
 			// locate the registry and get ror.
 			RMIRegistry registry = LocateRMIRegistry.getRegistry(host, port);
 			if (registry == null) {
@@ -36,13 +49,20 @@ public class ZipCodeClient {
 			}
 			System.out.println("Registry found");
 			RemoteObjectReference roRef = registry.lookup(serviceName);
-			
 			if (roRef == null) {
 				System.out.println("Service not found...");
 			}
 
 			// get (create) the stub out of ror.
 			ZipCodeService_stub zcs = (ZipCodeService_stub) roRef.localise();
+			if (zcs == null) {
+				System.out.println("Shit! I've got a NullPointer!");
+			} else {
+				System.out.println("Stub generated successfully!");
+			}
+			
+			// attach RemoteObjectReference
+			zcs.attachReference(roRef);
 
 			// reads the data and make a "local" zip code list.
 			// later this is sent to the server.
@@ -102,7 +122,7 @@ public class ZipCodeClient {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 		
 }

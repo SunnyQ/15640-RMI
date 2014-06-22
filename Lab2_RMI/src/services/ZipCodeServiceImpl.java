@@ -21,7 +21,7 @@ public class ZipCodeServiceImpl implements ZipCodeService {
 	// when this is called, marshalled data
 	// should be sent to this remote object,
 	// and reconstructed.
-	public void initialise(ZipCodeList newlist) {
+	public void initialize(ZipCodeList newlist) {
 		l=newlist;
 	}
 

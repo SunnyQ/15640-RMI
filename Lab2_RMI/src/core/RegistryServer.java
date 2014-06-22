@@ -12,7 +12,6 @@ import java.util.HashMap;
 // listens for "lookup" and "rebind" request
 public class RegistryServer {
 	
-	private static final int REGISTRY_PORT = 7777;
 	private HashMap<String, RemoteObjectReference> binding;
 	private ServerSocket serverSoc;
 	
@@ -24,7 +23,7 @@ public class RegistryServer {
 	// launch server
 	public void launch() {
 		try {
-			serverSoc = new ServerSocket(REGISTRY_PORT);
+			serverSoc = new ServerSocket(RMIConstants.REGISTRY_PORT);
 			Socket socket;
 			System.out.println("RegistryServer started, now accepting request...");
 			while (true) {
@@ -53,7 +52,6 @@ public class RegistryServer {
 					out.println("found");
 					out.println(roRef.getIP());
 					out.println(roRef.getPort());
-					out.println(roRef.getObjectKey());
 					out.println(roRef.getInterfaceName());			
 				} else {
 					out.println("not found");
@@ -63,15 +61,16 @@ public class RegistryServer {
 				String serviceName = in.readLine();
 				String roRef_IP = in.readLine();
 				String roRef_Port = in.readLine();
-				String roRef_ObjectKey = in.readLine();
 				String roRef_InterfaceName = in.readLine();
 				
 				// create RemoteObjectReference
-				RemoteObjectReference roRef = new RemoteObjectReference(roRef_IP, Integer.parseInt(roRef_Port), 
-						Integer.parseInt(roRef_ObjectKey), roRef_InterfaceName);
+				RemoteObjectReference roRef = new RemoteObjectReference(roRef_IP, Integer.parseInt(roRef_Port), roRef_InterfaceName);
 				
 				// bind
 				binding.put(serviceName, roRef);
+				
+				// send back acknowledgement
+				out.println("ack");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

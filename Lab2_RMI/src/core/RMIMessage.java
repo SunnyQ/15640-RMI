@@ -10,12 +10,12 @@ public class RMIMessage implements Serializable {
 	private static final long serialVersionUID = 3716508031587963606L;
 	
 	// instance variables
-	private String methodName;    		// method to invoke
+	private String methodName;    		    // method to invoke
 	private RemoteObjectReference roRef;	// remote reference attached to the message
-	private Object[] args;        		// arguments to the method
-	private Exception exception;  		// store any exception generated
-	private Object returnValue;   		// store the return value of the method
-	private Class<?> returnType;     	// store the return type of the method
+	private Object[] args;        		    // arguments to the method
+	private Exception exception;  		    // store any exception generated
+	private Object returnValue;   		    // store the return value of the method
+	private Class<?> returnType;     	    // store the return type of the method
 	
 	// constructor
 	public RMIMessage(String methodName, Object[] args) {

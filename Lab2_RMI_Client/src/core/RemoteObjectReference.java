@@ -1,5 +1,7 @@
 package core;
 
+import java.io.Serializable;
+
 
 /**
  *  Any client holding an instance of RemoteObjectReference will be able to
@@ -10,23 +12,24 @@ package core;
  *
  */
 
-public class RemoteObjectReference {
+public class RemoteObjectReference implements Serializable {
 
-    private String IPAddress;
+	private static final long serialVersionUID = -7514708045819316612L;
+	private String IPAddress;
     private int port;
     private int objectKey;
     private String interfaceName;
 
-    public RemoteObjectReference (String IPAddress, int port, int objectKey, String interfaceName) {
+    public RemoteObjectReference (String IPAddress, int port, String interfaceName) {
     	this.IPAddress = IPAddress;
     	this.port = port;
-    	this.objectKey = objectKey;
     	this.interfaceName = interfaceName;
+    	this.objectKey = -1;
     }
 
     // creates a new stub object and returns it
     public Object localise() {
-    	String stubClassName = interfaceName + "_stub";
+    	String stubClassName = "services." + interfaceName + "_stub";
     	Class<?> stubClass;
     	Object stub = null;
 		try {
@@ -57,6 +60,15 @@ public class RemoteObjectReference {
     
     public String getInterfaceName() {
     	return this.interfaceName;
+    }
+    
+    // setters
+    public void setObjectKey(int objectKey) {
+    	this.objectKey = objectKey;
+    }
+    
+    public void setInterfaceName (String interfaceName) {
+    	this.interfaceName = interfaceName;
     }
 		
 }
