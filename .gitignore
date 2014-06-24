@@ -8,3 +8,5 @@ Lab2_RMI/.project
 Lab2_RMI_Client/.classpath
 
 Lab2_RMI_Client/.project
+
+*.class
