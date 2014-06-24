@@ -38,7 +38,8 @@ public class RMI440 {
 				System.out.println("Couldn't locate registry...");
 				System.exit(-1);
 			}
-				
+			
+			// implementation class
 			Class<?> implClass = Class.forName(implClassName);
 			
 			// bind initial RemoteObjectReference to serviceName
@@ -52,7 +53,7 @@ public class RMI440 {
 			// continuously accept connection request
 			while (true) {
 				System.out.println("RMI440 engine waiting for next connection request...");
-				Socket socket = serverSoc.accept();
+				Socket socket = serverSoc.accept();				
 				ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 				ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 				// read RMIMessage

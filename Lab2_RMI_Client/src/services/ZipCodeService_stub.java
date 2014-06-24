@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import core.RMIMessage;
+import core.RemoteException440;
 import core.RemoteObjectReference;
 
 /**
@@ -37,7 +38,7 @@ public class ZipCodeService_stub {
 	}
 
 	// invoke the initialize() method of the remote interface
-	public void initialize(ZipCodeList newlist) {		
+	public void initialize(ZipCodeList newlist) throws RemoteException440 {		
 		
 		// check whether reference is attached
 		if (roRef == null) {
@@ -52,10 +53,15 @@ public class ZipCodeService_stub {
 		establishConnection();
 		// deliver RMIMessage
 		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
 	}
 	
 	// invoke the find() method of the remote interface
-	public String find(String city) {		
+	public String find(String city) throws RemoteException440 {		
 		
 		// check whether reference is attached
 		if (roRef == null) {
@@ -70,11 +76,16 @@ public class ZipCodeService_stub {
 		establishConnection();
 		// deliver RMIMessage
 		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
 		return (String) replyMessage.getReturnValue();
 	}
 	
 	// invoke the findAll() method of the remote interface
-	public ZipCodeList findAll() {
+	public ZipCodeList findAll() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
@@ -88,11 +99,16 @@ public class ZipCodeService_stub {
 		establishConnection();
 		// deliver RMIMessage
 		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
 		return (ZipCodeList) replyMessage.getReturnValue();
 	}
 	
 	// invoke the printAll() method of the remote interface
-	public void printAll() {
+	public void printAll() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
@@ -106,10 +122,15 @@ public class ZipCodeService_stub {
 		establishConnection();
 		// deliver RMIMessage
 		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
 	}
 	
 	// deliver RMIMessage to the communication module and wait for reply message
-	public void deliver(RMIMessage message) {
+	public void deliver(RMIMessage message) throws RemoteException440 {
 		try {
 			outputStream.writeObject(message);
 			// if no object key generated, then wait for the assigned object key
@@ -120,21 +141,25 @@ public class ZipCodeService_stub {
 			replyMessage = (RMIMessage) inputStream.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new RemoteException440(e.getMessage());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+			throw new RemoteException440(e.getMessage());
 		}
 	}
 	
 	// helper for establishing connection to remote host
-	private void establishConnection() {
+	private void establishConnection() throws RemoteException440 {
 		try {
 			socket = new Socket(roRef.getIP(), roRef.getPort());
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			inputStream = new ObjectInputStream(socket.getInputStream());			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			throw new RemoteException440(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new RemoteException440(e.getMessage());
 		}
 	}
 	

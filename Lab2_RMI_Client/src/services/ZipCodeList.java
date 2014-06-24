@@ -3,7 +3,10 @@ package services;
 import java.io.Serializable;
 
 public class ZipCodeList implements Serializable {
-    String city;
+
+	private static final long serialVersionUID = -4966374210089123302L;
+	
+	String city;
     String ZipCode;
     ZipCodeList next;
 

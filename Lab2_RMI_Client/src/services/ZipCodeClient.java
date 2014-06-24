@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import core.LocateRMIRegistry;
 import core.RMIConstants;
 import core.RMIRegistry;
+import core.RemoteException440;
 import core.RemoteObjectReference;
 
 public class ZipCodeClient { 
@@ -41,12 +42,9 @@ public class ZipCodeClient {
 			
 			BufferedReader in = new BufferedReader(new FileReader(fileName));
 			
-			// locate the registry and get ror.
+			// locate the registry and get a Remote Object Reference
 			RMIRegistry registry = LocateRMIRegistry.getRegistry(host, port);
-			if (registry == null) {
-				System.out.println("Registry could not be found! Program aborting...");
-				System.exit(-1);
-			}
+
 			System.out.println("Registry found");
 			RemoteObjectReference roRef = registry.lookup(serviceName);
 			if (roRef == null) {
@@ -118,7 +116,9 @@ public class ZipCodeClient {
 			// here is a test.
 			zcs.printAll();
 			in.close();
-		} catch (FileNotFoundException e) {
+		} catch (RemoteException440 re) {
+			System.out.println(re.getMessage());
+	    } catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
