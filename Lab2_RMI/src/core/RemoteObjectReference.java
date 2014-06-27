@@ -35,6 +35,8 @@ public class RemoteObjectReference implements Serializable {
 		try {
 			stubClass = Class.forName(stubClassName);
 			stub = stubClass.newInstance();
+			// attach a the current remote object reference
+			((Stub)stub).attachReference(this);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {

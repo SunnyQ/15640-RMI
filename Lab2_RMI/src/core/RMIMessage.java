@@ -44,7 +44,7 @@ public class RMIMessage implements Serializable {
 		try {
 			Method method = objectClass.getMethod(methodName, argsClass);
 			returnType = method.getReturnType();   		
-			returnValue = method.invoke(object, args);			
+			returnValue = method.invoke(object, args);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			this.exception = e;
@@ -90,6 +90,15 @@ public class RMIMessage implements Serializable {
 	
 	public Class<?> getReturnType() {
 		return this.returnType;
+	}
+	
+	public void setReturnValue(Object object) {
+		this.returnValue = object;
+	}
+	
+	// for replacing remote object reference with local object reference
+	public void setArguments(int index, Object obj) {
+		this.args[index] = obj;
 	}
 
 }

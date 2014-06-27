@@ -4,24 +4,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 // listens for "lookup" and "rebind" request
-public class RegistryServer {
+public class RegistryServer implements Runnable {
 	
 	private HashMap<String, RemoteObjectReference> binding;
+	private HashMap<String, String> implClassBinding;
 	private ServerSocket serverSoc;
 	
 	// constructor
 	public RegistryServer() {
 		binding = new HashMap<String, RemoteObjectReference>();
+		implClassBinding = new HashMap<String, String>();
 	}
 	
 	// launch server
-	public void launch() {
+	public void run() {
 		try {
 			serverSoc = new ServerSocket(RMIConstants.REGISTRY_PORT);
 			Socket socket;
@@ -62,15 +67,31 @@ public class RegistryServer {
 				String roRef_IP = in.readLine();
 				String roRef_Port = in.readLine();
 				String roRef_InterfaceName = in.readLine();
+				String implClassName = in.readLine();
 				
 				// create RemoteObjectReference
 				RemoteObjectReference roRef = new RemoteObjectReference(roRef_IP, Integer.parseInt(roRef_Port), roRef_InterfaceName);
 				
 				// bind
 				binding.put(serviceName, roRef);
+				implClassBinding.put(serviceName, implClassName);				
 				
 				// send back acknowledgement
+				System.out.println("binding successful for " + serviceName);
 				out.println("ack");
+			} else if (from.equals("list")) {
+				String serviceNames = "";
+				String implClassNames = "";
+				Iterator<String> itr = binding.keySet().iterator();
+				while (itr.hasNext()) {
+					String serviceName = itr.next();
+					String implClassName = implClassBinding.get(serviceName);
+					serviceNames += serviceName + " ";
+					implClassNames += implClassName + " ";
+				}
+				out.println(serviceNames);
+				out.println(implClassNames);
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,6 +100,21 @@ public class RegistryServer {
 	
 	public static void main(String args[]) {
 		RegistryServer rs = new RegistryServer();
-		rs.launch();
+		new Thread(rs).start();
+		String registryHost = null;
+		int registryPort = -1;
+		try {
+			registryHost = InetAddress.getLocalHost().getHostName();
+			registryPort = RMIConstants.REGISTRY_PORT;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		if (registryHost != null && registryPort != -1) {
+			RMI440 dispatcher = new RMI440(registryHost, registryPort);
+//			dispatcher.addService("ZipCodeService", "services.ZipCodeServiceImpl");
+//			dispatcher.addService("ZipCodeRList", "services.ZipCodeRListImpl");
+			new Thread(dispatcher).start();
+		}
+				
 	}
 }

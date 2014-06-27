@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RMIRegistry { 
 	// regitry's IP address and port number
@@ -80,9 +82,52 @@ public class RMIRegistry {
 		// return RemoteObjectReference
 		return roRef;
     }
+    
+    // get the services list from registry
+    public Map<String, String> getServicesList() {
+    	
+    	Socket socket = null;
+		Map<String, String> services = new HashMap<String, String>();
+		try {
+			// open socket
+			socket = new Socket(IPAddress, port);
+			System.out.println("socket made.");
+		    
+			// get TCP streams and wrap them. 
+			BufferedReader in = new BufferedReader(new InputStreamReader (socket.getInputStream()));
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			System.out.println("stream made.");
+			
+			// send list request
+			out.println("list");
+			
+			// read back service and implClass names and form HashMap
+			String[] serviceNames = in.readLine().split(" ");
+			String[] implClassNames = in.readLine().split(" "); 
+			
+			for (int i = 0; i < serviceNames.length; i++) {
+				services.put(serviceNames[i], implClassNames[i]);
+			}
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// close socket
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return services;
+    }
 
     // rebind a RemoteObjectReference
-    public void rebind(String serviceName, RemoteObjectReference roRef) {
+    public void rebind(String serviceName, RemoteObjectReference roRef, String implClassName) {
     	
     	// open socket
 		Socket socket = null;
@@ -98,6 +143,7 @@ public class RMIRegistry {
 			out.println(roRef.getIP());
 			out.println(roRef.getPort()); 
 			out.println(roRef.getInterfaceName());
+			out.println(implClassName);
 		
 			// wait for acknowledgement
 			String ack = in.readLine();

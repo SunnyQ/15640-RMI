@@ -91,5 +91,14 @@ public class RMIMessage implements Serializable {
 	public Class<?> getReturnType() {
 		return this.returnType;
 	}
+	
+	public void setReturnValue(Object object) {
+		this.returnValue = object;
+	}
+	
+	// for replacing remote object reference with local object reference
+	public void setArguments(int index, Object obj) {
+		this.args[index] = obj;
+	}
 
 }
