@@ -38,7 +38,12 @@ public class RMIMessage implements Serializable {
 		if (args != null){
 			argsClass = new Class<?>[args.length];
 			for (int i = 0; i < args.length; i++) {
-				argsClass[i] = args[i].getClass();
+				if (args[i] instanceof Remote440) {
+					argsClass[i] = args[i].getClass().getInterfaces()[0];
+				} else {
+					argsClass[i] = args[i].getClass();
+				}
+				
 			}
 		} 
 		try {

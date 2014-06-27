@@ -69,7 +69,7 @@ public class ZipCodeServiceImpl implements ZipCodeService {
 			// instantiate an instance of this class
 			ZipCodeServiceImpl zcs = new ZipCodeServiceImpl();
 			// tie the new instance to the Object we just created
-			Naming440.bind(serviceName, zcs);
+			Naming440.rebind(serviceName, zcs);
 			// print out a console message
 			System.out.println(serviceName + " ready");
 			

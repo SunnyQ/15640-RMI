@@ -3,7 +3,6 @@ package services;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -12,61 +11,30 @@ import core.RemoteException440;
 import core.RemoteObjectReference;
 import core.Stub;
 
-/**
- * There is at least one instance of the stub class for each remote object in use
- * within the JVM. The stub's job is to handle the marshalling of the method invocation
- * into a message, delivery of the message to the communication module, and the reverse of
- * this process, all the way to the client object, upon the methods return
- * 
- * @author alex
- */
-public class ZipCodeService_stub implements Stub, ZipCodeService {
+public class HelloService_stub implements HelloService, Stub {
+	
+	private static final long serialVersionUID = -1870618768947142465L;
 	
 	// instance variables
 	private RemoteObjectReference roRef;
 	private RMIMessage replyMessage;
-	private Socket socket;
-	private ObjectOutputStream outputStream;
-	private ObjectInputStream inputStream;
+	private transient Socket socket;
+	private transient ObjectOutputStream outputStream;
+	private transient ObjectInputStream inputStream;
 	
-	// default constructor
-	public ZipCodeService_stub() {
+	public HelloService_stub() {
 		 
 	}
 
-	// invoke the initialize() method of the remote interface
-	public void initialize(ZipCodeList newlist) throws RemoteException440 {		
-		
+	@Override
+	public String sayHello() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("initialize", new Object[]{newlist});
-		message.attachReference(roRef);
-		
-		// establish connection 
-		establishConnection();
-		// deliver RMIMessage
-		deliver(message);
-		// check for any exception encountered
-		if (message.getException() != null) {
-			throw new RemoteException440("Error occurred during invocation: "
-													+ message.getException());
-		}
-	}
-	
-	// invoke the find() method of the remote interface
-	public String find(String city) throws RemoteException440 {		
-		
-		// check whether reference is attached
-		if (roRef == null) {
-			throw new RuntimeException("No Remote Object Reference attached!!");
-		}
-		
-		// create a RMIMessage
-		RMIMessage message = new RMIMessage("find", new Object[]{city});
+		RMIMessage message = new RMIMessage("sayHello", null);
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -81,15 +49,14 @@ public class ZipCodeService_stub implements Stub, ZipCodeService {
 		return (String) replyMessage.getReturnValue();
 	}
 	
-	// invoke the findAll() method of the remote interface
-	public ZipCodeList findAll() throws RemoteException440 {
+	public void setName(String name) throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("findAll", null);
+		RMIMessage message = new RMIMessage("setName", new Object[]{name});
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -101,18 +68,16 @@ public class ZipCodeService_stub implements Stub, ZipCodeService {
 			throw new RemoteException440("Error occurred during invocation: "
 													+ message.getException());
 		}
-		return (ZipCodeList) replyMessage.getReturnValue();
 	}
 	
-	// invoke the printAll() method of the remote interface
-	public void printAll() throws RemoteException440 {
+	public HelloService newHello() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("printAll", null);
+		RMIMessage message = new RMIMessage("newHello", null);
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -124,6 +89,30 @@ public class ZipCodeService_stub implements Stub, ZipCodeService {
 			throw new RemoteException440("Error occurred during invocation: "
 													+ message.getException());
 		}
+		Object returnObj = replyMessage.getReturnValue();
+		return (HelloService)((RemoteObjectReference) returnObj).localise();
+	}
+	
+	public String introduce(HelloService hs) throws RemoteException440 {
+		// check whether reference is attached
+		if (roRef == null) {
+			throw new RuntimeException("No Remote Object Reference attached!!");
+		}
+		
+		// create a RMIMessage
+		RMIMessage message = new RMIMessage("introduce", new Object[]{hs});
+		message.attachReference(roRef);
+		
+		// establish connection 
+		establishConnection();
+		// deliver RMIMessage
+		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
+		return (String) replyMessage.getReturnValue();
 	}
 	
 	// deliver RMIMessage to the communication module and wait for reply message
@@ -176,4 +165,6 @@ public class ZipCodeService_stub implements Stub, ZipCodeService {
 	public RemoteObjectReference getReference() {
 		return this.roRef;
 	}
+	
+
 }

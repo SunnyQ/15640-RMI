@@ -111,8 +111,6 @@ public class RegistryServer implements Runnable {
 		}
 		if (registryHost != null && registryPort != -1) {
 			RMI440 dispatcher = new RMI440(registryHost, registryPort);
-//			dispatcher.addService("ZipCodeService", "services.ZipCodeServiceImpl");
-//			dispatcher.addService("ZipCodeRList", "services.ZipCodeRListImpl");
 			new Thread(dispatcher).start();
 		}
 				

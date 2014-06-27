@@ -1,59 +1,30 @@
 package services;
 
-//a client for ZipCodeServer.
-//it uses ZipCodeServer as an interface, and test
-//all methods.
-
-//It reads data from a file containing the service name and city-zip 
-//pairs in the following way:
-//city1
-//zip1
-//...
-//...
-//end.
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import core.LocateRMIRegistry;
+import core.Naming440;
 import core.RMIConstants;
-import core.RMIRegistry;
 import core.RemoteException440;
-import core.RemoteObjectReference;
 
 public class ZipCodeClient { 
  
 	public static void main(String[] args) {
-		
-//		String host = args[0];
-//		int port = Integer.parseInt(args[1]);
-//		String serviceName = args[2];
-//		String fileName = args[3];
 	
 		try {
 			// manually supply arguments
 			String host = InetAddress.getLocalHost().getHostName();
 			int port = RMIConstants.REGISTRY_PORT;
-			String serviceName = RMIConstants.SERVICE_NAME;
+			String serviceName = "ZipCodeService";
 			String fileName = "zipcodes.txt";
 			
 			BufferedReader in = new BufferedReader(new FileReader(fileName));
 			
-			// locate the registry and get a Remote Object Reference
-			RMIRegistry registry = LocateRMIRegistry.getRegistry(host, port);
-
-			System.out.println("Registry found");
-			RemoteObjectReference roRef = registry.lookup(serviceName);
-			if (roRef == null) {
-				System.out.println("Service not found...");
-			}
-
-			// get (create) the stub out of ror.
-			ZipCodeService zcs = (ZipCodeService) roRef.localise();
-			
+			ZipCodeService zcs = (ZipCodeService) Naming440.lookup(host, port, serviceName);
+						
 			if (zcs == null) {
 				System.out.println("Shit! I've got a NullPointer!");
 			} else {
@@ -62,7 +33,6 @@ public class ZipCodeClient {
 
 			// reads the data and make a "local" zip code list.
 			// later this is sent to the server.
-			// again no error check!
 			ZipCodeList l = null;
 			boolean flag = true;
 			while (flag) {
@@ -111,9 +81,9 @@ public class ZipCodeClient {
 		
 			// test the printall.
 			System.out.println("\n We test the remote site printing.");
-			// here is a test.
 			zcs.printAll();
 			in.close();
+			
 		} catch (RemoteException440 re) {
 			System.out.println(re.getMessage());
 	    } catch (FileNotFoundException e) {
@@ -124,4 +94,5 @@ public class ZipCodeClient {
 	}
 		
 }
+
 

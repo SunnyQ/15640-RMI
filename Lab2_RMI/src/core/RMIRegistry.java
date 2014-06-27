@@ -29,18 +29,14 @@ public class RMIRegistry {
 		try {
 			// open socket
 			socket = new Socket(IPAddress, port);
-			System.out.println("socket made.");
 		    
 			// get TCP streams and wrap them. 
 			BufferedReader in = new BufferedReader(new InputStreamReader (socket.getInputStream()));
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			System.out.println("stream made.");
 			
 			// send request and interface name (service name)
 			out.println("lookup");
 			out.println(serviceName);
-			
-			System.out.println("command and service name sent.");
 			
 			// branch according to the reply.
 			String reply = in.readLine();
@@ -50,11 +46,8 @@ public class RMIRegistry {
 		
 				// receive RemoteObjectReference data, without check.
 				String roRefIP = in.readLine();		
-				System.out.println(roRefIP);		
 				int roRefPort = Integer.parseInt(in.readLine());
-				System.out.println(roRefPort);
 				String roRefInterfaceName = in.readLine();	
-				System.out.println(roRefInterfaceName);
 					
 				// create RemoteObjectReference
 				roRef = new RemoteObjectReference(roRefIP, roRefPort, roRefInterfaceName);
@@ -91,12 +84,10 @@ public class RMIRegistry {
 		try {
 			// open socket
 			socket = new Socket(IPAddress, port);
-			System.out.println("socket made.");
 		    
 			// get TCP streams and wrap them. 
 			BufferedReader in = new BufferedReader(new InputStreamReader (socket.getInputStream()));
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			System.out.println("stream made.");
 			
 			// send list request
 			out.println("list");

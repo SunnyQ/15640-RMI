@@ -9,36 +9,32 @@ import java.net.UnknownHostException;
 import core.RMIMessage;
 import core.RemoteException440;
 import core.RemoteObjectReference;
+import core.Stub;
 
-public class ZipCodeRList_stub implements ZipCodeRList {
+public class HelloService_stub implements HelloService, Stub {
+	
+	private static final long serialVersionUID = -1870618768947142465L;
 	
 	// instance variables
 	private RemoteObjectReference roRef;
 	private RMIMessage replyMessage;
-	private Socket socket;
-	private ObjectOutputStream outputStream;
-	private ObjectInputStream inputStream;
+	private transient Socket socket;
+	private transient ObjectOutputStream outputStream;
+	private transient ObjectInputStream inputStream;
 	
-	// default constructor
-	public ZipCodeRList_stub() {
+	public HelloService_stub() {
 		 
 	}
-	
-	// attach Remote Object Reference
-	public void attachReference(RemoteObjectReference roRef) {
-		this.roRef = roRef;
-	}
-	
-	// invoke the find() method of the remote interface
-	public String find(String city) throws RemoteException440 {		
-		
+
+	@Override
+	public String sayHello() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("find", new Object[]{city});
+		RMIMessage message = new RMIMessage("sayHello", null);
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -53,15 +49,14 @@ public class ZipCodeRList_stub implements ZipCodeRList {
 		return (String) replyMessage.getReturnValue();
 	}
 	
-	// invoke the add() method of the remote interface
-	public ZipCodeRList_stub add(String city, String zipcode) throws RemoteException440 {
+	public void setName(String name) throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("add", new Object[]{city, zipcode});
+		RMIMessage message = new RMIMessage("setName", new Object[]{name});
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -73,18 +68,16 @@ public class ZipCodeRList_stub implements ZipCodeRList {
 			throw new RemoteException440("Error occurred during invocation: "
 													+ message.getException());
 		}
-		return (ZipCodeRList_stub) replyMessage.getReturnValue();
 	}
 	
-	// invoke the next() method of the remote interface
-	public ZipCodeRList_stub next() throws RemoteException440 {
+	public HelloService newHello() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("next", null);
+		RMIMessage message = new RMIMessage("newHello", null);
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -96,9 +89,31 @@ public class ZipCodeRList_stub implements ZipCodeRList {
 			throw new RemoteException440("Error occurred during invocation: "
 													+ message.getException());
 		}
-		return (ZipCodeRList_stub) replyMessage.getReturnValue();
+		Object returnObj = replyMessage.getReturnValue();
+		return (HelloService)((RemoteObjectReference) returnObj).localise();
 	}
 	
+	public String introduce(HelloService hs) throws RemoteException440 {
+		// check whether reference is attached
+		if (roRef == null) {
+			throw new RuntimeException("No Remote Object Reference attached!!");
+		}
+		
+		// create a RMIMessage
+		RMIMessage message = new RMIMessage("introduce", new Object[]{hs});
+		message.attachReference(roRef);
+		
+		// establish connection 
+		establishConnection();
+		// deliver RMIMessage
+		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
+		return (String) replyMessage.getReturnValue();
+	}
 	
 	// deliver RMIMessage to the communication module and wait for reply message
 	public void deliver(RMIMessage message) throws RemoteException440 {
@@ -110,12 +125,6 @@ public class ZipCodeRList_stub implements ZipCodeRList {
 				roRef.setObjectKey(assignedKey);
 			}
 			replyMessage = (RMIMessage) inputStream.readObject();
-			if (replyMessage.getReturnValue() instanceof RemoteObjectReference) {
-				// construct a new stub as the return value
-				ZipCodeRList_stub newStub = new ZipCodeRList_stub();
-				newStub.attachReference((RemoteObjectReference)replyMessage.getReturnValue());
-				replyMessage.setReturnValue(newStub);
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RemoteException440(e.getMessage());
@@ -144,4 +153,20 @@ public class ZipCodeRList_stub implements ZipCodeRList {
 	public Object getReturnValue() {
 		return replyMessage.getReturnValue();
 	}
+
+	// attach a remote reference
+	@Override
+	public void attachReference(RemoteObjectReference roRef) {
+		this.roRef = roRef;		
+	}
+
+	// return a remote reference
+	@Override
+	public RemoteObjectReference getReference() {
+		return this.roRef;
+	}
+	
+	
+	
+
 }
