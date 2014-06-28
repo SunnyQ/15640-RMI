@@ -2,8 +2,7 @@ package core;
 
 import java.io.Serializable;
 
-
-/**
+/*
  *  Any client holding an instance of RemoteObjectReference will be able to
  *  remotely invoke methods of remote objects on server side. RemoteObjectReference
  *  may be passed as arguments and results of remote method invocation
@@ -11,7 +10,6 @@ import java.io.Serializable;
  * @author alex
  *
  */
-
 public class RemoteObjectReference implements Serializable {
 
 	private static final long serialVersionUID = -7514708045819316612L;
@@ -20,6 +18,12 @@ public class RemoteObjectReference implements Serializable {
     private int objectKey;
     private String interfaceName;
 
+    /**
+     * Constructor
+     * @param IPAddress
+     * @param port
+     * @param interfaceName
+     */
     public RemoteObjectReference (String IPAddress, int port, String interfaceName) {
     	this.IPAddress = IPAddress;
     	this.port = port;
@@ -27,7 +31,10 @@ public class RemoteObjectReference implements Serializable {
     	this.objectKey = -1;
     }
 
-    // creates a new stub object and returns it
+    /**
+     * creates a new stub object, attach an ROR on this object, and returns it
+     * @return
+     */
     public Object localise() {
     	String stubClassName = "services." + interfaceName + "_stub";
     	Class<?> stubClass;

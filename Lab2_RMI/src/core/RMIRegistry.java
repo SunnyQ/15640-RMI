@@ -9,20 +9,38 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * The main purpose of this class is to support some basic
+ * communication with Registry Server such as lookup a service, 
+ * getServiceList, and rebind services with ROR and implClassName with Registry Server
+ * 
+ */
 public class RMIRegistry { 
 	// regitry's IP address and port number
     private String IPAddress;
     private int port;
     
+    /**
+     * Constructor with two parameters
+     * @param IPAddress
+     * @param port
+     */
     public RMIRegistry(String IPAddress, int port)
     {
     	this.IPAddress = IPAddress;
     	this.port = port;
     }
 
-    // look up a RemoteObjectReference by name
+    /**
+     * Communicate with the RMIRegistry to return the RemoteObjectReference
+     * correspondent with the given service name.
+     * @param serviceName
+     * @return RemoteObjectReference if found
+     * 		   null if not found
+     */
     public RemoteObjectReference lookup(String serviceName)
     {
+    	// look up a RemoteObjectReference by name
 		Socket socket = null;
 		RemoteObjectReference roRef = null;
 		
@@ -76,9 +94,12 @@ public class RMIRegistry {
 		return roRef;
     }
     
-    // get the services list from registry
+    /**
+     * Get the services list and the corresponding implementation classes from Registry Server
+     * @return Map contains the list of services and implementation classes
+     */
     public Map<String, String> getServicesList() {
-    	
+    	// get the services list from registry
     	Socket socket = null;
 		Map<String, String> services = new HashMap<String, String>();
 		try {
@@ -117,7 +138,12 @@ public class RMIRegistry {
 		return services;
     }
 
-    // rebind a RemoteObjectReference
+    /**
+     * rebind a RemoteObjectReference, its relevant service name and implClassName into Registry Server
+     * @param serviceName
+     * @param roRef
+     * @param implClassName
+     */
     public void rebind(String serviceName, RemoteObjectReference roRef, String implClassName) {
     	
     	// open socket

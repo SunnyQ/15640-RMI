@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-// A general format for representing messages between classes
+/*
+ * A general format for representing messages between classes
+ * and invoke method described in a general method
+ */
 public class RMIMessage implements Serializable {
 
 	private static final long serialVersionUID = 3716508031587963606L;
@@ -17,7 +20,11 @@ public class RMIMessage implements Serializable {
 	private Object returnValue;   		    // store the return value of the method
 	private Class<?> returnType;     	    // store the return type of the method
 	
-	// constructor
+	/**
+	 * Constructor
+	 * @param methodName
+	 * @param args
+	 */
 	public RMIMessage(String methodName, Object[] args) {
 		this.methodName = methodName;
 		this.args = args;
@@ -26,7 +33,10 @@ public class RMIMessage implements Serializable {
 		returnType = null;
 	}
 	
-	// invoke the specified method on the specified object with specified arguments
+	/**
+	 * invoke the specified method on the specified object with specified arguments
+	 * @param object
+	 */
 	public void invoke(Object object) {
 		// check validity
 		if (object == null || methodName == null) {
@@ -42,8 +52,7 @@ public class RMIMessage implements Serializable {
 					argsClass[i] = args[i].getClass().getInterfaces()[0];
 				} else {
 					argsClass[i] = args[i].getClass();
-				}
-				
+				}	
 			}
 		} 
 		try {
@@ -101,7 +110,11 @@ public class RMIMessage implements Serializable {
 		this.returnValue = object;
 	}
 	
-	// for replacing remote object reference with local object reference
+	/**
+	 * Replacing remote object reference with local object reference
+	 * @param index
+	 * @param obj
+	 */
 	public void setArguments(int index, Object obj) {
 		this.args[index] = obj;
 	}

@@ -10,6 +10,11 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Run as a thread to establish connection with the stub in client side
+ * and create a RMIMessage, invoke the method and return the return value
+ * back to stub in client side.
+ */
 public class RMI440 implements Runnable {
 	
 	private static String host;
@@ -26,7 +31,11 @@ public class RMI440 implements Runnable {
     	
     }
 	
-	// constructor
+	/**
+	 * Constructor
+	 * @param registryhost
+	 * @param registryport
+	 */
 	public RMI440(String registryhost, int registryport) {
 		try {
 			host = (InetAddress.getLocalHost()).getHostAddress();
@@ -39,7 +48,11 @@ public class RMI440 implements Runnable {
 		} 
 	}
 		
-	// launch RMI440 server process
+	/**
+	 * Launch RMI440 which receive connection from stub in client side,
+	 * create an RMIMessage, invoke method, and return the return value
+	 * to stub in client side
+	 */
 	public void run() {
 		try {
 			serverSoc = new ServerSocket(port);		
@@ -138,7 +151,12 @@ public class RMI440 implements Runnable {
 		}
 	}
 	
-	// helper: returns true if an object is a remote object
+	/**
+	 * helper: check if an object is a remote object or not
+	 * @param obj
+	 * @return true  ---- yes
+	 *         false ---- no
+	 */
 	private boolean isRemoteObject(Object obj) {
 		
 		if (obj instanceof Remote440) {

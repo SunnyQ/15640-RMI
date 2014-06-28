@@ -5,6 +5,10 @@ import java.net.InetAddress;
 import core.Naming440;
 import core.RMIConstants;
 
+/*
+ * Client implementation of Hello Service
+ * tests all the remote invoking methods provided by Hello Server
+ */
 public class HelloClient {
 
     // This takes one command line argument: A person's first name

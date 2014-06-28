@@ -11,21 +11,29 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
-// listens for "lookup" and "rebind" request
+/*
+ * The RMIRegistery server which runs as a thread
+ * that accepts connection from both LocateRMIRegistry and
+ * RMIRegistry and handle the relevant requests from
+ * instances of these two classes.
+ */
 public class RegistryServer implements Runnable {
-	
+	// listens for "lookup" and "rebind" request
 	private HashMap<String, RemoteObjectReference> binding;
 	private HashMap<String, String> implClassBinding;
 	private ServerSocket serverSoc;
 	
-	// constructor
+	/**
+	 * Constructor
+	 */
 	public RegistryServer() {
 		binding = new HashMap<String, RemoteObjectReference>();
 		implClassBinding = new HashMap<String, String>();
 	}
 	
-	// launch server
+	/**
+	 * run() function of the thread
+	 */
 	public void run() {
 		try {
 			serverSoc = new ServerSocket(RMIConstants.REGISTRY_PORT);
@@ -43,7 +51,17 @@ public class RegistryServer implements Runnable {
 		}
 	}
 
-	// private helper for handling request 
+	/** 
+	 * private helper for handling request
+	 * Commands include:
+	 * 					"who are you?" ---- answer RMIRegistry query
+	 * 					"lookup"	   ---- search in the binding map if the service is supported
+	 * 					"rebind"	   ---- generate an ROR and add it into the binding map 
+	 * 										and the implClassBinding map
+	 * 					"list"		   ---- get all service and implementation class names from the implClassBinding
+	 * @param in
+	 * @param out
+	 */
 	private void handleRequest(BufferedReader in, PrintWriter out) {
 		try {
 			String from = in.readLine();
@@ -98,6 +116,10 @@ public class RegistryServer implements Runnable {
 		}		
 	}
 	
+	/**
+	 * Start the RMIRegistry Server as a Thread and the RMI440 as a Thread
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		RegistryServer rs = new RegistryServer();
 		new Thread(rs).start();

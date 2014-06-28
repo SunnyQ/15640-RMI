@@ -3,6 +3,9 @@ package services;
 import core.Remote440;
 import core.RemoteException440;
 
+/*
+ * Lists of remotely invoking methods
+ */
 public interface HelloService extends Remote440 {
 	public String sayHello() throws RemoteException440;
 	public void setName(String name) throws RemoteException440;

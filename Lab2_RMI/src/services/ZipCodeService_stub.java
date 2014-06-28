@@ -3,49 +3,69 @@ package services;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
 import core.RMIMessage;
 import core.RemoteException440;
 import core.RemoteObjectReference;
 import core.Stub;
 
-/*
- * Stub class for HelloService which has the same method names
- * as the methods which need to be invoked remotely
- * The implementation of these method is way different than
- * that in the Hello class.
- * It marshals parameters and send message to RMI440 and also
- * receives messages from RMI440 and unmarshals it.
+/**
+ * There is at least one instance of the stub class for each remote object in use
+ * within the JVM. The stub's job is to handle the marshalling of the method invocation
+ * into a message, delivery of the message to the communication module, and the reverse of
+ * this process, all the way to the client object, upon the methods return
+ * 
  */
-public class HelloService_stub implements HelloService, Stub {
-	
-	private static final long serialVersionUID = -1870618768947142465L;
+public class ZipCodeService_stub implements Stub, ZipCodeService {
 	
 	// instance variables
 	private RemoteObjectReference roRef;
 	private RMIMessage replyMessage;
-	private transient Socket socket;
-	private transient ObjectOutputStream outputStream;
-	private transient ObjectInputStream inputStream;
+	private Socket socket;
+	private ObjectOutputStream outputStream;
+	private ObjectInputStream inputStream;
 	
-	public HelloService_stub() {
+	// default constructor
+	public ZipCodeService_stub() {
 		 
 	}
-	
-	/**
-	 * Create an RMIMessage described by "sayHello", establish connection, and deliver message to RMI440
-	 * then receive return value from RMI440
-	 */
-	@Override
-	public String sayHello() throws RemoteException440 {
+
+	// invoke the initialize() method of the remote interface
+	public void initialize(ZipCodeList newlist) throws RemoteException440 {		
+		
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("sayHello", null);
+		RMIMessage message = new RMIMessage("initialize", new Object[]{newlist});
+		message.attachReference(roRef);
+		
+		// establish connection 
+		establishConnection();
+		// deliver RMIMessage
+		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
+	}
+	
+	// invoke the find() method of the remote interface
+	public String find(String city) throws RemoteException440 {		
+		
+		// check whether reference is attached
+		if (roRef == null) {
+			throw new RuntimeException("No Remote Object Reference attached!!");
+		}
+		
+		// create a RMIMessage
+		RMIMessage message = new RMIMessage("find", new Object[]{city});
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -60,18 +80,38 @@ public class HelloService_stub implements HelloService, Stub {
 		return (String) replyMessage.getReturnValue();
 	}
 	
-	/**
-	 * Create an RMIMessage described by "setName" and parameter
-	 * and follow the same steps as the other stub methods
-	 */
-	public void setName(String name) throws RemoteException440 {
+	// invoke the findAll() method of the remote interface
+	public ZipCodeList findAll() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
 			throw new RuntimeException("No Remote Object Reference attached!!");
 		}
 		
 		// create a RMIMessage
-		RMIMessage message = new RMIMessage("setName", new Object[]{name});
+		RMIMessage message = new RMIMessage("findAll", null);
+		message.attachReference(roRef);
+		
+		// establish connection 
+		establishConnection();
+		// deliver RMIMessage
+		deliver(message);
+		// check for any exception encountered
+		if (message.getException() != null) {
+			throw new RemoteException440("Error occurred during invocation: "
+													+ message.getException());
+		}
+		return (ZipCodeList) replyMessage.getReturnValue();
+	}
+	
+	// invoke the printAll() method of the remote interface
+	public void printAll() throws RemoteException440 {
+		// check whether reference is attached
+		if (roRef == null) {
+			throw new RuntimeException("No Remote Object Reference attached!!");
+		}
+		
+		// create a RMIMessage
+		RMIMessage message = new RMIMessage("printAll", null);
 		message.attachReference(roRef);
 		
 		// establish connection 
@@ -85,64 +125,7 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
-	/**
-	 * Create an RMIMessage described by "newHello" and
-	 * follow the same steps as the other stub methods
-	 */
-	public HelloService newHello() throws RemoteException440 {
-		// check whether reference is attached
-		if (roRef == null) {
-			throw new RuntimeException("No Remote Object Reference attached!!");
-		}
-		
-		// create a RMIMessage
-		RMIMessage message = new RMIMessage("newHello", null);
-		message.attachReference(roRef);
-		
-		// establish connection 
-		establishConnection();
-		// deliver RMIMessage
-		deliver(message);
-		// check for any exception encountered
-		if (message.getException() != null) {
-			throw new RemoteException440("Error occurred during invocation: "
-													+ message.getException());
-		}
-		Object returnObj = replyMessage.getReturnValue();
-		return (HelloService)((RemoteObjectReference) returnObj).localise();
-	}
-	
-	/**
-	 * Create an RMIMessage described by "introduce" and 
-	 * follow the same steps as the other stub methods
-	 */
-	public String introduce(HelloService hs) throws RemoteException440 {
-		// check whether reference is attached
-		if (roRef == null) {
-			throw new RuntimeException("No Remote Object Reference attached!!");
-		}
-		
-		// create a RMIMessage
-		RMIMessage message = new RMIMessage("introduce", new Object[]{hs});
-		message.attachReference(roRef);
-		
-		// establish connection 
-		establishConnection();
-		// deliver RMIMessage
-		deliver(message);
-		// check for any exception encountered
-		if (message.getException() != null) {
-			throw new RemoteException440("Error occurred during invocation: "
-													+ message.getException());
-		}
-		return (String) replyMessage.getReturnValue();
-	}
-	
-	/**
-	 * Deliver RMIMessage to the communication module and wait for reply message
-	 * @param message
-	 * @throws RemoteException440
-	 */
+	// deliver RMIMessage to the communication module and wait for reply message
 	public void deliver(RMIMessage message) throws RemoteException440 {
 		try {
 			outputStream.writeObject(message);
@@ -151,7 +134,6 @@ public class HelloService_stub implements HelloService, Stub {
 				Integer assignedKey = (Integer) inputStream.readObject();
 				roRef.setObjectKey(assignedKey);
 			}
-			// wait here until reply
 			replyMessage = (RMIMessage) inputStream.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -162,10 +144,7 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
-	/**
-	 * helper for establishing connection to remote host
-	 * @throws RemoteException440
-	 */
+	// helper for establishing connection to remote host
 	private void establishConnection() throws RemoteException440 {
 		try {
 			socket = new Socket(roRef.getIP(), roRef.getPort());
@@ -180,28 +159,20 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
-	/**
-	 * retrieve the return value of the method invocation
-	 * @return
-	 */
+	// retrieve the return value of the method invocation
 	public Object getReturnValue() {
 		return replyMessage.getReturnValue();
 	}
 
-	/**
-	 * attach a remote reference
-	 */
+	// attach a remote reference
 	@Override
 	public void attachReference(RemoteObjectReference roRef) {
 		this.roRef = roRef;		
 	}
-
-	/**
-	 * return a remote reference
-	 */
+	
+	// return a remote reference
 	@Override
 	public RemoteObjectReference getReference() {
 		return this.roRef;
 	}
-	
 }

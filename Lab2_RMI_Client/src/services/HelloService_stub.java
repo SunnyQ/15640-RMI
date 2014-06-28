@@ -5,12 +5,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import core.RMIMessage;
 import core.RemoteException440;
 import core.RemoteObjectReference;
 import core.Stub;
 
+/*
+ * Stub class for HelloService which has the same method names
+ * as the methods which need to be invoked remotely
+ * The implementation of these method is way different than
+ * that in the Hello class.
+ * It marshals parameters and send message to RMI440 and also
+ * receives messages from RMI440 and unmarshals it.
+ */
 public class HelloService_stub implements HelloService, Stub {
 	
 	private static final long serialVersionUID = -1870618768947142465L;
@@ -25,7 +32,11 @@ public class HelloService_stub implements HelloService, Stub {
 	public HelloService_stub() {
 		 
 	}
-
+	
+	/**
+	 * Create an RMIMessage described by "sayHello", establish connection, and deliver message to RMI440
+	 * then receive return value from RMI440
+	 */
 	@Override
 	public String sayHello() throws RemoteException440 {
 		// check whether reference is attached
@@ -49,6 +60,10 @@ public class HelloService_stub implements HelloService, Stub {
 		return (String) replyMessage.getReturnValue();
 	}
 	
+	/**
+	 * Create an RMIMessage described by "setName" and parameter
+	 * and follow the same steps as the other stub methods
+	 */
 	public void setName(String name) throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
@@ -70,6 +85,10 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
+	/**
+	 * Create an RMIMessage described by "newHello" and
+	 * follow the same steps as the other stub methods
+	 */
 	public HelloService newHello() throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
@@ -93,6 +112,10 @@ public class HelloService_stub implements HelloService, Stub {
 		return (HelloService)((RemoteObjectReference) returnObj).localise();
 	}
 	
+	/**
+	 * Create an RMIMessage described by "introduce" and 
+	 * follow the same steps as the other stub methods
+	 */
 	public String introduce(HelloService hs) throws RemoteException440 {
 		// check whether reference is attached
 		if (roRef == null) {
@@ -115,7 +138,11 @@ public class HelloService_stub implements HelloService, Stub {
 		return (String) replyMessage.getReturnValue();
 	}
 	
-	// deliver RMIMessage to the communication module and wait for reply message
+	/**
+	 * Deliver RMIMessage to the communication module and wait for reply message
+	 * @param message
+	 * @throws RemoteException440
+	 */
 	public void deliver(RMIMessage message) throws RemoteException440 {
 		try {
 			outputStream.writeObject(message);
@@ -124,6 +151,7 @@ public class HelloService_stub implements HelloService, Stub {
 				Integer assignedKey = (Integer) inputStream.readObject();
 				roRef.setObjectKey(assignedKey);
 			}
+			// wait here until reply
 			replyMessage = (RMIMessage) inputStream.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -134,7 +162,10 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
-	// helper for establishing connection to remote host
+	/**
+	 * helper for establishing connection to remote host
+	 * @throws RemoteException440
+	 */
 	private void establishConnection() throws RemoteException440 {
 		try {
 			socket = new Socket(roRef.getIP(), roRef.getPort());
@@ -149,22 +180,28 @@ public class HelloService_stub implements HelloService, Stub {
 		}
 	}
 	
-	// retrieve the return value of the method invocation
+	/**
+	 * retrieve the return value of the method invocation
+	 * @return
+	 */
 	public Object getReturnValue() {
 		return replyMessage.getReturnValue();
 	}
 
-	// attach a remote reference
+	/**
+	 * attach a remote reference
+	 */
 	@Override
 	public void attachReference(RemoteObjectReference roRef) {
 		this.roRef = roRef;		
 	}
-	
-	// return a remote reference
+
+	/**
+	 * return a remote reference
+	 */
 	@Override
 	public RemoteObjectReference getReference() {
 		return this.roRef;
 	}
 	
-
 }

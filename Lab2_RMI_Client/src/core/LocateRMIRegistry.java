@@ -3,19 +3,19 @@ package core;
 import java.net.*;
 import java.io.*;
 
-/**
+/*
  * This class provides a static method to retrieve a RMIRegistry on specified
  * host via specified port
  * 
  * @author alex
  */
-public class LocateRMIRegistry { 
+public class LocateRMIRegistry {
+	
 	/**
 	 * Retrieve RMIRegistry on server
 	 * @param host Host IP address
 	 * @param port Host port to connect to
 	 * @return RMI Registry if found, null if not found
-	 * @throws RemoteException440 
 	 */
     public static RMIRegistry getRegistry(String host, int port) {
     	

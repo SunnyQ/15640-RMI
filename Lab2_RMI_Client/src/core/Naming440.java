@@ -2,18 +2,32 @@ package core;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
-
+/*
+ * The general purpose of this class is to simplify
+ * the bind process from the server side and the lookup
+ * process from the client side. It wraps up the communication
+ * process to RMIRegistry running on the same machine as
+ * the server and different machine as client and creates
+ * more transparency to application programmers.
+ */
 public class Naming440 {
 	
 	// static class variables
 	private static String registryHost;
 	private static int registryPort;
 	
-	// bind initial references to the services via RMIRegistry
+	/**
+	 * bind initial reference to the service on RMIRgistry
+	 * through generating a new RemoteObjectReference and bind
+	 * it on the RMIRegistry along with the service name and
+	 * the implement class name
+	 * CALL FROM SERVER
+	 * @param serviceName
+	 * @param object
+	 */
 	public static void rebind(String serviceName, Object object) {
+		// bind initial references to the services via RMIRegistry
 		String implClassName = object.getClass().getName();
 		// locate the RMIRegistry
     	try {
@@ -44,9 +58,19 @@ public class Naming440 {
 		}
 	}
 	
-	// look up a service and return a stub for the client
+	/**
+	 * look up a service and return a stub of that service
+	 * through getting the RMIRegistry and calling its lookup() function
+	 * to get the remote object reference and then calling its 
+	 * localise() function
+	 * CALL FROM CLIENT
+	 * @param host
+	 * @param port
+	 * @param serviceName
+	 * @return relevant stub object of the service
+	 */
 	public static Object lookup(String host, int port, String serviceName) {
-		
+		// look up a service and return a stub for the client
 		// locate the RMIRegistry		
 		RMIRegistry registry = LocateRMIRegistry.getRegistry(host, port);
 		RemoteObjectReference roRef = registry.lookup(serviceName);
@@ -57,5 +81,4 @@ public class Naming440 {
 		return roRef.localise();
 	}
 
-	
 }

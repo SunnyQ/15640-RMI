@@ -2,6 +2,7 @@ package services;
 
 import java.io.Serializable;
 
+//  a class required for the ZipCodeService interface 
 public class ZipCodeList implements Serializable {
 
 	private static final long serialVersionUID = -4966374210089123302L;

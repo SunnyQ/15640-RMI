@@ -4,34 +4,22 @@ import core.Naming440;
 import core.RemoteException440;
 
 
-//in implementation, you do not have to extend this as in Java RMI. 
-//in your design, however, you can do so.
-//it is assumed that this is not directly called but as in:
-//
-//java yourRMI ZipCodeServerImpl registryhost resigstryport servicename
-//
-//therefore it does not contain main: new object creation, binding etc. is 
-//done via your RMI.
-
 public class ZipCodeServiceImpl implements ZipCodeService {
 	
 	private static final String serviceName = "ZipCodeService";
 	
 	private ZipCodeList l;
 	
-	// this is a constructor.
 	public ZipCodeServiceImpl() throws RemoteException440 {
 		l=null;
 	}
 
-	// when this is called, marshalled data
-	// should be sent to this remote object,
-	// and reconstructed.
+	// initialize the list
 	public void initialize(ZipCodeList newlist) throws RemoteException440 {
 		l=newlist;
 	}
 
-	// basic function: gets a city name, returns the zip code.
+	// gets a city name, returns the zip code.
 	public String find(String request) throws RemoteException440 {
 		// search the list.
 		ZipCodeList temp = l;
@@ -45,8 +33,6 @@ public class ZipCodeServiceImpl implements ZipCodeService {
 		    return temp.ZipCode;
 	}
 
-	// this very short method should send the marshalled 
-	// whole list to the local site.
 	public ZipCodeList findAll() throws RemoteException440 {
 		return l;
 	}
